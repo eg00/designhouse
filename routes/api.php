@@ -4,12 +4,15 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\User\MeController;
+use App\Http\Controllers\User\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('me', [MeController::class, 'getMe']);
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', [App\Http\Controllers\Auth\LoginController::class, 'logout']);
+    Route::put('settings/profile', [SettingsController::class, 'updateProfile']);
+    Route::put('settings/password', [SettingsController::class, 'updatePassword']);
 });
 
 
