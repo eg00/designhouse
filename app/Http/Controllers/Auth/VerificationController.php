@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 
 class VerificationController extends Controller
 {
@@ -19,7 +25,6 @@ class VerificationController extends Controller
     |
     */
 
-    use VerifiesEmails;
 
     /**
      * Where to redirect users after verification.
@@ -35,8 +40,87 @@ class VerificationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
+    }
+
+    /**
+     * Mark the authenticated user's email address as verified.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function verify(Request $request, User $user): JsonResponse
+    {
+        // check if the url is a valid signed url
+        if (!URL::hasValidSignature($request)) {
+            return \response()->json(
+                [
+                    "errors" => [
+                        "message" => "Invalid verification link"
+                    ]
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        // check if the user has already verified  account
+        if ($user->hasVerifiedEmail()) {
+            return \response()->json(
+                [
+                    "errors" => [
+                        "message" => "Email address already verified"
+                    ]
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($request->user()));
+            return \response()->json(["message" => "Email successfully verified"], Response::HTTP_OK);
+        }
+
+
+        return \response()->json(
+            [
+                "errors" => [
+                    "message" => "Unknown Error"
+                ]
+            ],
+            520
+        );
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function resend(Request $request): JsonResponse
+    {
+        $this->validate($request, ['email' => ['email', 'required']]);
+
+        $user = User::query()->where('email', $request->email)->first();
+        if (!$user) {
+            return \response()->json([
+                "errors" => [
+                    "message" => "No user could be found with this email address"
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // check if the user has already verified  account
+        if ($user->hasVerifiedEmail()) {
+            return \response()->json([
+                "errors" => [
+                    "message" => "Email address already verified"
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $user->sendEmailVerificationNotification();
+
+        return \response()->json(['status' => "verification link resent"]);
     }
 }

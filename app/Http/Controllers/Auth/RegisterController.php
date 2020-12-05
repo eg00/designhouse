@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +25,6 @@ class RegisterController extends Controller
     */
 
     use RegistersUsers;
-
-
 
     /**
      * Get a validator for an incoming registration request.
@@ -59,7 +58,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    protected function registered(Request $request, $user)
+    protected function registered(Request $request, User $user): JsonResponse
     {
         return response()->json($user,Response::HTTP_CREATED);
     }
