@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\User\MeController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +19,6 @@ Route::group(['middleware' => ['guest:api']], function () {
         ->name('verification.verify');
     Route::post('verification/resend', 'Auth\VerificationController@resend');
     Route::post('login', [LoginController::class, 'login']);
+    Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+    Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 });
