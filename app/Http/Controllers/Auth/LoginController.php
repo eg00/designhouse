@@ -7,7 +7,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -25,7 +24,7 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
-    public function attemptLogin(Request $request)
+    public function attemptLogin(Request $request): bool
     {
         // attempt to issue a token
         $token = $this->guard()->attempt($this->credentials($request));
@@ -49,7 +48,13 @@ class LoginController extends Controller
         return true;
     }
 
-    protected function sendLoginResponse(Request $request)
+    public function logout(): JsonResponse
+    {
+        $this->guard()->logout();
+        return \response()->json(['message' => 'Logged out sucessfully']);
+    }
+
+    protected function sendLoginResponse(Request $request): JsonResponse
     {
         $this->clearLoginAttempts($request);
 
