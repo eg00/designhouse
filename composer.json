@@ -13,6 +13,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "grimzy/laravel-mysql-spatial": "^4.0",
         "guzzlehttp/guzzle": "^7.2.0",
+        "intervention/image": "^2.5",
         "laravel/framework": "^8.17.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
