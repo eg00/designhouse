@@ -17,6 +17,8 @@
         "laravel/framework": "^8.17.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
+        "league/flysystem-aws-s3-v3": "~1.0",
+        "league/flysystem-cached-adapter": "^1.1",
         "tymon/jwt-auth": "^1.0.2"
     },
     "require-dev": {
