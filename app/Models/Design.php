@@ -10,7 +10,9 @@ class Design extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'image', 'title', 'description', 'slug', 'close_to_comment', 'is_live'];
+    protected $fillable = [
+        'user_id', 'image', 'title', 'description', 'slug', 'close_to_comment', 'is_live', 'upload_successful', 'disk'
+    ];
 
     public function user(): BelongsTo
     {
