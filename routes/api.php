@@ -18,6 +18,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::post('designs', [UploadController::class, 'upload']);
     Route::put('designs/{id}', [DesignController::class, 'update']);
+    Route::delete('designs/{id}', [DesignController::class, 'destroy']);
 });
 
 
