@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Design\DesignController;
 use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\SettingsController;
@@ -16,6 +17,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::put('settings/password', [SettingsController::class, 'updatePassword']);
 
     Route::post('designs', [UploadController::class, 'upload']);
+    Route::put('designs/{id}', [DesignController::class, 'update']);
 });
 
 
