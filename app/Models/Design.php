@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentTaggable\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Class Design
+ * @package App\Models
+ * @method retag($tags)
+ */
 class Design extends Model
 {
     use HasFactory;
+    use Taggable;
 
     protected $fillable = [
         'user_id', 'image', 'title', 'description', 'slug', 'close_to_comment', 'is_live', 'upload_successful', 'disk'
