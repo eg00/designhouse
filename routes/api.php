@@ -7,9 +7,17 @@ use App\Http\Controllers\Design\DesignController;
 use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\SettingsController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('me', [MeController::class, 'getMe']);
+
+// Get designs
+Route::get('designs', [DesignController::class, 'index']);
+
+// Get Users
+Route::get('users', [UserController::class, 'index']);
+
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', [LoginController::class, 'logout']);
