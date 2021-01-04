@@ -7,11 +7,12 @@ namespace App\Repositories\Eloquent;
 use App\Models\User;
 use App\Repositories\Contracts\UserInterface;
 
-class UserRepository implements UserInterface
+class UserRepository extends BaseRepository implements UserInterface
 {
 
-    public function all()
+
+    public function model()
     {
-        return User::all();
+        return User::class;
     }
 }
