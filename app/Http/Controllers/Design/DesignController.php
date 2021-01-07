@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Design;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
-use App\Models\Design;
 use App\Repositories\Contracts\DesignInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,10 +26,15 @@ class DesignController extends Controller
         return DesignResource::collection($designs);
     }
 
+    public function show($id)
+    {
+        $design = $this->designs->find($id);
+        return new DesignResource($design);
+    }
+
     public function update(Request $request, $id)
     {
-        $design = Design::query()->findOrFail($id);
-
+        $design = $this->designs->find($id);
         $this->authorize('update', $design);
 
         $this->validate($request, [
@@ -39,14 +43,14 @@ class DesignController extends Controller
             'tags' => ['required'],
         ]);
 
-        $design->update([
+        $design = $this->designs->update($id,[
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),
             'is_live' => !$design->upload_successful ? false : $request->is_live
         ]);
 
-        $design->retag($request->tags);
+        $this->designs->applyTags($id,$request->tags);
 
 //        return response()->json($design, Response::HTTP_OK);
         return new DesignResource($design);
@@ -54,7 +58,7 @@ class DesignController extends Controller
 
     public function destroy($id)
     {
-        $design = Design::query()->findOrFail($id);
+        $design = $this->designs->find($id);
         $this->authorize('delete', $design);
 
         //delete the files associated to the record
@@ -65,7 +69,7 @@ class DesignController extends Controller
             }
         }
 
-        $design->delete();
+        $this->designs->delete($id);
 
         return response()->json(['message' => 'Record deleted'], Response::HTTP_OK);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
-interface DesignInterface
+interface DesignInterface extends BaseInterface
 {
-    public function all();
+    public function ApplyTags($id,array $data);
 }

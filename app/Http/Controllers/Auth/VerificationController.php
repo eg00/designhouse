@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use App\Repositories\Contracts\UserInterface;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,14 +34,16 @@ class VerificationController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    protected $users;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserInterface $users)
     {
         $this->middleware('throttle:6,1')->only('verify', 'resend');
+        $this->users = $users;
     }
 
     /**
@@ -102,7 +105,7 @@ class VerificationController extends Controller
     {
         $this->validate($request, ['email' => ['email', 'required']]);
 
-        $user = User::query()->where('email', $request->email)->first();
+        $user = $this->users->findWhereFirst('email', $request->email);
         if (!$user) {
             return \response()->json([
                 "errors" => [

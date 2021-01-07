@@ -14,6 +14,7 @@ Route::get('me', [MeController::class, 'getMe']);
 
 // Get designs
 Route::get('designs', [DesignController::class, 'index']);
+Route::get('designs/{id}', [DesignController::class, 'show']);
 
 // Get Users
 Route::get('users', [UserController::class, 'index']);

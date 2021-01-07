@@ -4,7 +4,7 @@
 namespace App\Repositories\Contracts;
 
 
-interface UserInterface
+interface UserInterface extends BaseInterface
 {
     public function all();
 }

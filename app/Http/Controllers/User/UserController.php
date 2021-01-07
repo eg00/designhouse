@@ -4,7 +4,6 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use App\Repositories\Contracts\UserInterface;
 
 class UserController extends Controller
@@ -18,7 +17,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::all();
+        $users = $this->users->all();
 
         return UserResource::collection($users);
     }
