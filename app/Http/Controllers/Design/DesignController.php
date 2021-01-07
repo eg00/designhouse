@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Design;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Repositories\Contracts\DesignInterface;
+use App\Repositories\Eloquent\Criteria\IsLive;
+use App\Repositories\Eloquent\Criteria\LatestFirst;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +23,9 @@ class DesignController extends Controller
 
     public function index()
     {
-        $designs = $this->designs->all();
+        $designs = $this->designs->withCriteria([
+            new LatestFirst(), new IsLive()
+        ])->all();
 
         return DesignResource::collection($designs);
     }
