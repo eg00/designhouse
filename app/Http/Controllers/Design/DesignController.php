@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Design;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Repositories\Contracts\DesignInterface;
-use App\Repositories\Eloquent\Criteria\ForUser;
-use App\Repositories\Eloquent\Criteria\IsLive;
-use App\Repositories\Eloquent\Criteria\LatestFirst;
+use App\Repositories\Eloquent\Criteria\{EagerLoad, ForUser, IsLive, LatestFirst};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +23,7 @@ class DesignController extends Controller
     public function index()
     {
         $designs = $this->designs->withCriteria([
-            new LatestFirst(), new IsLive(), new ForUser(1)
+            new LatestFirst(), new IsLive(), new ForUser(1), new EagerLoad(['user', 'comments'])
         ])->all();
 
         return DesignResource::collection($designs);
@@ -48,14 +46,14 @@ class DesignController extends Controller
             'tags' => ['required'],
         ]);
 
-        $design = $this->designs->update($id,[
+        $design = $this->designs->update($id, [
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),
             'is_live' => !$design->upload_successful ? false : $request->is_live
         ]);
 
-        $this->designs->applyTags($id,$request->tags);
+        $this->designs->applyTags($id, $request->tags);
 
 //        return response()->json($design, Response::HTTP_OK);
         return new DesignResource($design);
