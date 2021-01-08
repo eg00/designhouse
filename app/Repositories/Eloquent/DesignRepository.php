@@ -15,10 +15,17 @@ class DesignRepository extends BaseRepository implements DesignInterface
         return Design::class;
     }
 
-    public function ApplyTags($id,array $data)
+    public function ApplyTags($id, array $data)
     {
         $design = $this->find($id);
         $design->retag($data);
+    }
+
+    public function addComment($design_id, array $data)
+    {
+        $design = $this->find($design_id);
+
+        return $design->comments()->create($data);
     }
 
 }
