@@ -6,21 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Repositories\Contracts\DesignInterface;
 use App\Repositories\Eloquent\Criteria\{EagerLoad, ForUser, IsLive, LatestFirst};
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class DesignController extends Controller
 {
-    protected $designs;
+    protected DesignInterface $designs;
 
     public function __construct(DesignInterface $designs)
     {
         $this->designs = $designs;
     }
 
-    public function index()
+    /**
+     * @return ResourceCollection
+     */
+    public function index(): ResourceCollection
     {
         $designs = $this->designs->withCriteria([
             new LatestFirst(), new IsLive(), new ForUser(1), new EagerLoad(['user', 'comments'])
@@ -29,13 +36,24 @@ class DesignController extends Controller
         return DesignResource::collection($designs);
     }
 
-    public function show($id)
+    /**
+     * @param $id
+     * @return DesignResource
+     */
+    public function show($id): DesignResource
     {
         $design = $this->designs->find($id);
         return new DesignResource($design);
     }
 
-    public function update(Request $request, $id)
+    /**
+     * @param  Request  $request
+     * @param $id
+     * @return DesignResource
+     * @throws AuthorizationException
+     * @throws ValidationException
+     */
+    public function update(Request $request, $id): DesignResource
     {
         $design = $this->designs->find($id);
         $this->authorize('update', $design);
@@ -47,19 +65,24 @@ class DesignController extends Controller
         ]);
 
         $design = $this->designs->update($id, [
-            'title' => $request->title,
-            'description' => $request->description,
-            'slug' => Str::slug($request->title),
-            'is_live' => !$design->upload_successful ? false : $request->is_live
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'slug' => Str::slug($request->input('title')),
+            'is_live' => !$design->upload_successful ? false : $request->input('is_live')
         ]);
 
-        $this->designs->applyTags($id, $request->tags);
+        $this->designs->applyTags($id, $request->input('tags'));
 
 //        return response()->json($design, Response::HTTP_OK);
         return new DesignResource($design);
     }
 
-    public function destroy($id)
+    /**
+     * @param $id
+     * @return JsonResponse
+     * @throws AuthorizationException
+     */
+    public function destroy($id): JsonResponse
     {
         $design = $this->designs->find($id);
         $this->authorize('delete', $design);
@@ -77,7 +100,11 @@ class DesignController extends Controller
         return \response()->json(['message' => 'Record deleted'], Response::HTTP_OK);
     }
 
-    public function like($id)
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function like($id): JsonResponse
     {
         $this->designs->like($id);
 
