@@ -62,13 +62,15 @@ class DesignController extends Controller
             'title' => ['required', 'unique:designs,title,'.$id],
             'description' => ['required', 'string', 'min:20', 'max:140'],
             'tags' => ['required'],
+            'team' => ['required_if:assign_to_team,1']
         ]);
 
         $design = $this->designs->update($id, [
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'slug' => Str::slug($request->input('title')),
-            'is_live' => !$design->upload_successful ? false : $request->input('is_live')
+            'is_live' => !$design->upload_successful ? false : $request->input('is_live'),
+            'team_id' => $request->input('team')
         ]);
 
         $this->designs->applyTags($id, $request->input('tags'));
