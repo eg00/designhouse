@@ -17,7 +17,7 @@ class TeamRepository extends BaseRepository implements TeamInterface
 
     public function fetchUserTeams()
     {
-        // TODO: Implement fetchUserTeams() method.
+        return auth()->user()->teams()->get();
     }
 
     public function findBySlug($slug)

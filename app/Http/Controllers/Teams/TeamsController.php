@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TeamResource;
 use App\Repositories\Contracts\TeamInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Str;
 
 class TeamsController extends Controller
@@ -33,27 +34,38 @@ class TeamsController extends Controller
     public function store(Request $request): TeamResource
     {
         $this->validate($request, [
-            'name'=> ['required', 'string', 'max:80', 'unique:teams,name']
+            'name' => ['required', 'string', 'max:80', 'unique:teams,name']
         ]);
 
         $team = $this->teams->create([
             'owner_id' => auth()->id(),
-            'name'=> $request->input('name'),
-            'slug'=> Str::slug($request->input('name')),
+            'name' => $request->input('name'),
+            'slug' => Str::slug($request->input('name')),
         ]);
 
-        return  new TeamResource($team);
+        return new TeamResource($team);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return void
+     * @return TeamResource
      */
-    public function show($id)
+    public function findById($id): TeamResource
     {
-        //
+        $team = $this->teams->find($id);
+        return new TeamResource($team);
+    }
+
+    /**
+     * @return ResourceCollection
+     */
+    public function fetchUserTeams(): ResourceCollection
+    {
+        $teams = $this->teams->fetchUserTeams();
+
+        return TeamResource::collection($teams);
     }
 
     /**
@@ -61,11 +73,23 @@ class TeamsController extends Controller
      *
      * @param  Request  $request
      * @param  int  $id
-     * @return void
+     * @return TeamResource
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): TeamResource
     {
-        //
+        $team = $this->teams->find($id);
+        $this->authorize('update', $team);
+
+        $this->validate($request, [
+            'name' => ['required', 'string', 'max:80', 'unique:teams,name,'.$id]
+        ]);
+
+        $team = $this->teams->update($id, [
+            'name' => $request->input('name'),
+            'slug' => Str::slug($request->input('name')),
+        ]);
+
+        return new TeamResource($team);
     }
 
     /**
