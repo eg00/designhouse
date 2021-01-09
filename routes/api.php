@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Design\CommentController;
 use App\Http\Controllers\Design\DesignController;
 use App\Http\Controllers\Design\UploadController;
+use App\Http\Controllers\Teams\TeamsController;
 use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\SettingsController;
 use App\Http\Controllers\User\UserController;
@@ -19,6 +20,8 @@ Route::get('designs/{id}', [DesignController::class, 'show']);
 
 // Get Users
 Route::get('users', [UserController::class, 'index']);
+
+Route::get('teams/slug/{slug}', [TeamsController::class, 'findBySlug']);
 
 
 Route::group(['middleware' => ['auth:api']], function () {
@@ -39,6 +42,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('designs/{id}/comments',[CommentController::class, 'store']);
     Route::put('comments/{id}',[CommentController::class, 'update']);
     Route::delete('comments/{id}',[CommentController::class, 'destroy']);
+
+    // Teams
+    Route::post('teams', [TeamsController::class, 'store']);
+    Route::get('teams', [TeamsController::class, 'index']);
+    Route::get('users/teams', [TeamsController::class, 'fetchUserTeams']);
+    Route::get('teams/{id}', [TeamsController::class, 'findById']);
+    Route::put('teams/{id}', [TeamsController::class, 'update']);
+    Route::delete('teams/{id}', [TeamsController::class, 'destroy']);
 
 });
 

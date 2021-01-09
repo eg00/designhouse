@@ -18,6 +18,16 @@ class Team extends Model
         'slug',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // when team is created, add current user as team member
+        static::created(fn ($team) => $team->members()->attach(auth()->id()));
+
+        static::deleting(fn ($team) => $team->members()->sync([]));
+    }
+
     /**
      * @return BelongsTo
      */
