@@ -74,7 +74,20 @@ class DesignController extends Controller
 
         $this->designs->delete($id);
 
-        return response()->json(['message' => 'Record deleted'], Response::HTTP_OK);
+        return \response()->json(['message' => 'Record deleted'], Response::HTTP_OK);
+    }
+
+    public function like($id)
+    {
+        $this->designs->like($id);
+
+        return \response()->json(['message' => 'Successful'], Response::HTTP_OK);
+    }
+
+    public function checkIfUserHasLiked($design_id,)
+    {
+        $isLiked = $this->designs->isLikedByUser($design_id);
+        return \response()->json(['liked' => $isLiked]);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Likeable;
 use Cviebrock\EloquentTaggable\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Design extends Model
 {
     use HasFactory;
     use Taggable;
+    use Likeable;
 
     protected $fillable = [
         'user_id', 'image', 'title', 'description', 'slug', 'close_to_comment', 'is_live', 'upload_successful', 'disk'
@@ -50,4 +52,6 @@ class Design extends Model
         return $this->morphMany(Comment::class, 'commentable')
             ->orderBy('created_at', 'asc');
     }
+
+
 }
