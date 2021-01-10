@@ -6,7 +6,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Design\CommentController;
 use App\Http\Controllers\Design\DesignController;
 use App\Http\Controllers\Design\UploadController;
-use App\Http\Controllers\Teams\TeamsController;
+use App\Http\Controllers\Team\InvitationController;
+use App\Http\Controllers\Team\TeamsController;
 use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\SettingsController;
 use App\Http\Controllers\User\UserController;
@@ -50,6 +51,12 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('teams/{id}', [TeamsController::class, 'findById']);
     Route::put('teams/{id}', [TeamsController::class, 'update']);
     Route::delete('teams/{id}', [TeamsController::class, 'destroy']);
+
+    // Invitations
+    Route::post('invitations/{teamId}', [InvitationController::class, 'invite']);
+    Route::post('invitations/{id}/resend', [InvitationController::class, 'resend']);
+    Route::post('invitations/{id}/respond', [InvitationController::class, 'respond']);
+    Route::delete('invitations/{id}', [InvitationController::class, 'destroy']);
 
 });
 

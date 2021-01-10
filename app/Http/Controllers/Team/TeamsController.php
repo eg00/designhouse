@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Teams;
+namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TeamResource;
