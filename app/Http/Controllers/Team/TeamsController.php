@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TeamResource;
+use App\Repositories\Contracts\InvitationInterface;
 use App\Repositories\Contracts\TeamInterface;
+use App\Repositories\Contracts\UserInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 
 class TeamsController extends Controller
 {
-    public function __construct(protected TeamInterface $teams)
-    {
+    public function __construct(
+        protected TeamInterface $teams,
+        protected UserInterface $users,
+        protected InvitationInterface $invitations
+    ) {
     }
 
     /**
@@ -101,5 +107,28 @@ class TeamsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function removeFromTeam($teamId, $userId)
+    {
+        $team = $this->teams->find($teamId);
+        $user = $this->users->find($userId);
+
+        if (optional($user)->isOwnerOfTeam($team)) {
+            return response()->json([
+                'message' => 'You are the team owner'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (!optional(auth()->user())->isOwnerOfTeam($team)) {
+            return response()->json([
+                'message' => 'You cannot do this'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $this->invitations->removeUserFromTeam($team, $userId);
+
+        return \response()->json(['message' => 'Successful']);
     }
 }
