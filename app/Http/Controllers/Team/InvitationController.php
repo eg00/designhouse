@@ -87,8 +87,26 @@ class InvitationController extends Controller
             ->send(new SendInvitationToJoinTeam($invitation, $user_exists));
     }
 
-    public function resend(): void
+    public function resend($id): JsonResponse
     {
+        $invitation = $this->invitations->find($id);
+
+        // check if the user owns the team
+        if (!optional(auth()->user())->isOwnerOfTeam($invitation->team)) {
+            return response()->json([
+                'email' => 'You are not the team owner'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+
+        // get the recipient by email
+        $recipient = $this->users->findByEmail($invitation->recipient_email);
+
+        Mail::to($invitation->recipient_email)
+            ->send(new SendInvitationToJoinTeam($invitation, !is_null($recipient)));
+
+        return response()->json(['message' => 'Invitation resent to user']);
+
     }
 
     public function respond(): void
