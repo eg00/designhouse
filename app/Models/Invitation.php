@@ -21,12 +21,12 @@ class Invitation extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public function recipient()
+    public function recipient(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(User::class, 'email', 'recipient_email');
     }
 
-    public function sender()
+    public function sender(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(User::class, 'id', 'sender_id');
     }
