@@ -91,6 +91,7 @@ class InvitationController extends Controller
     {
         $invitation = $this->invitations->find($id);
 
+        $this->authorize('respond', $invitation);
         // check if the user owns the team
         if (!optional(auth()->user())->isOwnerOfTeam($invitation->team)) {
             return response()->json([
@@ -109,11 +110,51 @@ class InvitationController extends Controller
 
     }
 
-    public function respond(): void
+    public function respond(Request $request, $id): JsonResponse
     {
+        $this->validate($request, [
+            'token' => ['required'],
+            'decision' => ['required', 'boolean']
+        ]);
+
+        $token = $request->token;
+        $decision = $request->decision;
+        $invitation = $this->invitations->find($id);
+
+        // check if the invitation belongs to this user
+//        if($invitation->recipient_email !== auth()->user()->email) {
+//            return  \response()->json([
+//                'message' => 'This is not your invitation'
+//            ], Response::HTTP_UNAUTHORIZED);
+//        }
+
+        $this->authorize('respond', $invitation);
+
+        // check to make sure that the tokens match
+        if($invitation->token !== $token) {
+            return  \response()->json([
+                'message' => 'The token is invalid'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if($decision) {
+            auth()->user()->teams()->attach($invitation->team->id);
+            $this->invitations->addUserToTeam($invitation->team, auth()->id());
+        }
+
+        $invitation->delete();
+        return  \response()->json([
+            'message' => 'Successful'
+        ]);
     }
 
-    public function destroy(): void
+    public function destroy($id): JsonResponse
     {
+        $invitation = $this->invitations->find($id);
+
+        $this->authorize('delete', $invitation);
+
+        $invitation->delete();
+        return  \response()->json(['message' => 'Successful']);
     }
 }
