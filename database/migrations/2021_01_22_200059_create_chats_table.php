@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Chat;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +15,13 @@ class CreateChatsTable extends Migration
     public function up()
     {
         Schema::create('chats', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->timestamps();
+        });
+
+        Schema::create('participants', function (Blueprint $table) {
+            $table->foreignIdFor(Chat::class)->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
     }
 
@@ -26,6 +32,7 @@ class CreateChatsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('participants');
         Schema::dropIfExists('chats');
     }
 }
