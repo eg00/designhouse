@@ -19,4 +19,10 @@ class ChatRepository extends BaseRepository implements ChatInterface
         $chat = $this->model->find($chat_id);
         $chat->participants()->sync($data);
     }
+
+    public function getUserChats()
+    {
+        return auth()->user()->chats()
+            ->with(['messages', 'participants'])->get();
+    }
 }

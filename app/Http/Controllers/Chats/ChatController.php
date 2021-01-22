@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Chats;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ChatResource;
 use App\Http\Resources\MessageResource;
 use App\Repositories\Contracts\ChatInterface;
 use App\Repositories\Contracts\MessageInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ChatController extends Controller
 {
@@ -44,8 +46,14 @@ class ChatController extends Controller
         return new MessageResource($message);
     }
 
-    public function getUserChats(): void
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function getUserChats(): AnonymousResourceCollection
     {
+        $chats = $this->chats->getUserChats();
+
+        return ChatResource::collection($chats);
     }
 
     /**
