@@ -13,4 +13,10 @@ class ChatRepository extends BaseRepository implements ChatInterface
     {
         return Chat::class;
     }
+
+    public function createParticipants($chat_id, array $data)
+    {
+        $chat = $this->model->find($chat_id);
+        $chat->participants()->sync($data);
+    }
 }

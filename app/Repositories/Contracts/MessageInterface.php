@@ -4,7 +4,7 @@
 namespace App\Repositories\Contracts;
 
 
-interface MessageInterface
+interface MessageInterface extends BaseInterface
 {
 
 }
