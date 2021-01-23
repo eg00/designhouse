@@ -124,4 +124,13 @@ class DesignController extends Controller
         $designs = $this->designs->search($request);
         return DesignResource::collection($designs);
     }
+
+    public function showBySlug($slug)
+    {
+        $design = $this->designs->withCriteria([
+            new LatestFirst(), new IsLive()
+        ])->findWhereFirst('slug', $slug);
+
+        return new DesignResource($design);
+    }
 }

@@ -35,6 +35,12 @@ class Design extends Model
     ];
     protected $appends = ['images'];
 
+
+//    public function resolveRouteBinding($value, $field = null)
+//    {
+//        return  self::query()->where('slug', $value)->orWhere('id', $value)->firstOrFail();
+//    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

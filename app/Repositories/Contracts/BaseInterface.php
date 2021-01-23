@@ -8,7 +8,7 @@ interface BaseInterface
 {
     public function all();
 
-    public function find(int $id);
+    public function find(int|string $id);
 
     public function findWhere(string $column, $value);
 

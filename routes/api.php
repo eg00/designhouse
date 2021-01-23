@@ -19,6 +19,7 @@ Route::get('me', [MeController::class, 'getMe']);
 // Get designs
 Route::get('designs', [DesignController::class, 'index']);
 Route::get('designs/{id}', [DesignController::class, 'show']);
+Route::get('designs/slug/{id}', [DesignController::class, 'showBySlug']);
 
 // Get Users
 Route::get('users', [UserController::class, 'index']);
@@ -27,6 +28,7 @@ Route::get('teams/slug/{slug}', [TeamsController::class, 'findBySlug']);
 
 // Search Designs
 Route::get('search/designs', [DesignController::class, 'search']);
+Route::get('search/designers', [UserController::class, 'search']);
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', [LoginController::class, 'logout']);

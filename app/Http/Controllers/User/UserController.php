@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Repositories\Contracts\UserInterface;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -23,5 +24,11 @@ class UserController extends Controller
         ])->all();
 
         return UserResource::collection($users);
+    }
+
+    public function search(Request $request)
+    {
+        $designers = $this->users->search($request);
+        return UserResource::collection($designers);
     }
 }
