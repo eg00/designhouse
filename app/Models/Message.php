@@ -33,4 +33,18 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function getBodyAttribute($value)
+    {
+        if ($this->trashed()) {
+            if (!auth()->check()) {
+                return null;
+            }
+
+            return auth()->id() === $this->sender->id ?
+                'You deleted this message' :
+                "{$this->sender->name} deleted message";
+        }
+        return $value;
+    }
 }
