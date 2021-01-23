@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravolt\Avatar\Avatar;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
@@ -55,6 +56,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['photo_url'];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -153,5 +161,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function chats()
     {
         return $this->belongsToMany(Chat::class, 'participants');
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return (new Avatar)->create($this->email)->toGravatar();
     }
 }
