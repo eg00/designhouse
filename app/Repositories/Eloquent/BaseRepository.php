@@ -59,7 +59,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
         return $record;
     }
 
-    public function find(int $id)
+    public function find(int|string $id)
     {
         return $this->model->findOrFail($id);
     }
