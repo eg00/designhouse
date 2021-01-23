@@ -133,4 +133,14 @@ class DesignController extends Controller
 
         return new DesignResource($design);
     }
+
+    public function getForTeam($id)
+    {
+        $designs = $this->designs->withCriteria([
+            new LatestFirst(), new IsLive()
+        ])->findWhere('team_id', $id);
+
+        return DesignResource::collection($designs);
+    }
 }
+
