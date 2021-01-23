@@ -23,6 +23,8 @@ Route::get('designs/slug/{id}', [DesignController::class, 'showBySlug']);
 
 // Get Users
 Route::get('users', [UserController::class, 'index']);
+Route::get('user/{username}', [UserController::class, 'findByUsername']);
+Route::get('users/{id}/designs', [DesignController::class, 'getForUser']);
 
 Route::get('teams/slug/{slug}', [TeamsController::class, 'findBySlug']);
 Route::get('teams/{id}/designs', [DesignController::class, 'getForTeam']);
