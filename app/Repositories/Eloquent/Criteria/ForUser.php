@@ -6,6 +6,7 @@ namespace App\Repositories\Eloquent\Criteria;
 
 use App\Repositories\Criteria\CriterionInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ForUser implements CriterionInterface
 {
@@ -16,8 +17,8 @@ class ForUser implements CriterionInterface
     {
     }
 
-    public function apply(Builder $builder): Builder
+    public function apply(Model|Builder $model): Builder
     {
-        return $builder->where('user_id', $this->user_id);
+        return $model->where('user_id', $this->user_id);
     }
 }

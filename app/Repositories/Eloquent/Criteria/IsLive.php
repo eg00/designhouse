@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent\Criteria;
 
+use App\Repositories\Criteria\CriterionInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class IsLive implements \App\Repositories\Criteria\CriterionInterface
+class IsLive implements CriterionInterface
 {
-    public function apply(Builder $builder): Builder
+    public function apply(Model|Builder $model): Builder
     {
-        return $builder->where('is_live', true);
+        return $model->where('is_live', true);
     }
 }

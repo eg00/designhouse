@@ -7,6 +7,7 @@ namespace App\Repositories\Eloquent;
 use App\Exceptions\ModelNotDefined;
 use App\Repositories\Contracts\BaseInterface;
 use App\Repositories\Criteria\CriteriaInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,16 +15,16 @@ use Illuminate\Support\Arr;
 
 abstract class BaseRepository implements BaseInterface, CriteriaInterface
 {
-    protected Model $model;
+    protected Model|Builder $model;
 
     public function __construct()
     {
         $this->model = $this->getModelClass();
     }
 
-    protected function getModelClass(): Model
+    protected function getModelClass(): Model|Builder
     {
-        if (! method_exists($this, 'model')) {
+        if (!method_exists($this, 'model')) {
             throw new ModelNotDefined();
         }
 
@@ -51,7 +52,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
     }
 
     /**
-     * @param  array<mixed>  $data
+     * @param array<mixed> $data
      */
     public function create(array $data): Model
     {
@@ -59,7 +60,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
     }
 
     /**
-     * @param  array<mixed>  $data
+     * @param array<mixed> $data
      */
     public function update(int $id, array $data): Model
     {
@@ -80,9 +81,9 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
     }
 
     /**
-     * @param  array<mixed>  $criteria
+     * @param array<mixed> $criteria
      */
-    public function withCriteria(...$criteria): BaseRepository
+    public function withCriteria(...$criteria): self
     {
         $criteria = Arr::flatten($criteria);
 

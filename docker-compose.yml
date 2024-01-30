@@ -47,6 +47,17 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    test-db:
+      image: 'mysql/mysql-server:8.0'
+      environment:
+        MYSQL_ROOT_PASSWORD: 'forge'
+        MYSQL_ROOT_HOST: '%'
+        MYSQL_DATABASE: 'forge'
+        MYSQL_USER: 'forge'
+        MYSQL_PASSWORD: 'forge'
+        MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      networks:
+        - sail
 networks:
     sail:
         driver: bridge

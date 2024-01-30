@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('me', [MeController::class, 'getMe']);
 
 // Get designs
-Route::get('designs', [DesignController::class, 'index']);
+Route::get('designs', [DesignController::class, 'index'])->name('designs');
 Route::get('designs/{id}', [DesignController::class, 'show']);
 Route::get('designs/slug/{id}', [DesignController::class, 'showBySlug']);
 

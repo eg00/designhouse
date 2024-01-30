@@ -7,13 +7,14 @@ namespace App\Repositories\Eloquent;
 use App\Models\Comment;
 use App\Models\Design;
 use App\Repositories\Contracts\DesignInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class DesignRepository extends BaseRepository implements DesignInterface
 {
-    public function model(): Model
+    public function model(): Model|Builder
     {
         return new Design();
     }

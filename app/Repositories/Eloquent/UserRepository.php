@@ -6,14 +6,16 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class UserRepository extends BaseRepository implements UserInterface
 {
-    public function model(): Model
+    public function model(): Model|Builder
     {
         return new User();
     }
@@ -60,5 +62,19 @@ class UserRepository extends BaseRepository implements UserInterface
         }
 
         return $query->get();
+    }
+
+    /**
+     * @param  array<mixed>  $criteria
+     */
+    public function withCriteria(...$criteria): self
+    {
+        $criteria = Arr::flatten($criteria);
+
+        foreach ($criteria as $criterion) {
+            $this->model = $criterion->apply($this->model);
+        }
+
+        return $this;
     }
 }
