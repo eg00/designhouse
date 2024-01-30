@@ -1,3 +1,22 @@
 {
-    "preset": "laravel"
+    "preset": "laravel",
+    "rules" : {
+        "declare_strict_types": true,
+        "native_function_casing": true,
+        "ordered_imports": {"sort_algorithm":"alpha"},
+        "visibility_required": true,
+        "heredoc_indentation": true,
+        "assign_null_coalescing_to_coalesce_equal": true,
+        "short_scalar_cast": true,
+        "simple_to_complex_string_variable": true,
+        "trailing_comma_in_multiline": true,
+        "ternary_to_null_coalescing": true,
+        "normalize_index_brace": true,
+        "list_syntax": true,
+        "simplified_if_return": true,
+        "simplified_null_return": true,
+        "date_time_immutable": true,
+        "no_trailing_whitespace": true,
+        "return_type_declaration": true
+    }
 }
