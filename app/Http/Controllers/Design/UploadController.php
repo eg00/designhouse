@@ -19,15 +19,15 @@ class UploadController extends Controller
         $image_path = $image->getPathname();
 
         //get the original file name and replace any spaces with _
-        $filename = time()."_".preg_replace('/\s+/','_', strtolower($image->getClientOriginalName()));
+        $filename = time().'_'.preg_replace('/\s+/', '_', strtolower($image->getClientOriginalName()));
 
         // move the image to the temporary location
-        $tmp = $image->storeAs('uploads/original',$filename, 'tmp');
+        $tmp = $image->storeAs('uploads/original', $filename, 'tmp');
 
         // create the database record for the design
         $design = auth()->user()->designs()->create([
             'image' => $filename,
-            'disk'=> config('site.upload_disk')
+            'disk' => config('site.upload_disk'),
         ]);
 
         // dispatch a job to handle the image manipulation

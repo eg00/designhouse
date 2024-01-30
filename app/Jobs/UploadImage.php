@@ -18,9 +18,6 @@ class UploadImage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * @var Design
-     */
     protected Design $design;
 
     /**

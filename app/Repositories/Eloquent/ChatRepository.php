@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repositories\Eloquent;
-
 
 use App\Models\Chat;
 use App\Repositories\Contracts\ChatInterface;

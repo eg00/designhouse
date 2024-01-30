@@ -11,9 +11,6 @@ class Chat extends Model
 {
     use HasFactory;
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'participants');
@@ -36,7 +33,7 @@ class Chat extends Model
 
     public function isUnreadForUser($user_id)
     {
-        return (boolean) $this->messages()
+        return (bool) $this->messages()
             ->whereNull('last_read')
             ->where('user_id', '<>', $user_id)
             ->count();

@@ -48,9 +48,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('designs/{id}/liked', [DesignController::class, 'checkIfUserHasLiked']);
 
     // Comments
-    Route::post('designs/{id}/comments',[CommentController::class, 'store']);
-    Route::put('comments/{id}',[CommentController::class, 'update']);
-    Route::delete('comments/{id}',[CommentController::class, 'destroy']);
+    Route::post('designs/{id}/comments', [CommentController::class, 'store']);
+    Route::put('comments/{id}', [CommentController::class, 'update']);
+    Route::delete('comments/{id}', [CommentController::class, 'destroy']);
 
     // Teams
     Route::post('teams', [TeamsController::class, 'store']);
@@ -75,7 +75,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::put('chats/{id}/markAsRead', [ChatController::class, 'markAsRead']);
     Route::delete('messages/{id}', [ChatController::class, 'destroyMessage']);
 });
-
 
 Route::group(['middleware' => ['guest:api']], function () {
     Route::post('register', 'Auth\RegisterController@register');

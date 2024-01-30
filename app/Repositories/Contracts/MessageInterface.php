@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Repositories\Contracts;
 
 /**
@@ -8,5 +7,4 @@ namespace App\Repositories\Contracts;
  */
 interface MessageInterface extends BaseInterface
 {
-
 }

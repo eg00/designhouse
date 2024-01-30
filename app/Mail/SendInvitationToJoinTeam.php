@@ -14,9 +14,6 @@ class SendInvitationToJoinTeam extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param  Invitation  $invitation
-     * @param  bool  $user_exists
      */
     public function __construct(public Invitation $invitation, public bool $user_exists)
     {
@@ -31,6 +28,7 @@ class SendInvitationToJoinTeam extends Mailable
     {
         if ($this->user_exists) {
             $url = config('app.client_url').'/settings/teams';
+
             return $this->markdown('emails.invitations.invite-existing-user')
                 ->subject('Invitation to join team '.$this->invitation->team->name)
                 ->with(['invitation' => $this->invitation, 'url' => $url]);

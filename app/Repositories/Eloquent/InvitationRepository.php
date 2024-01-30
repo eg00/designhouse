@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repositories\Eloquent;
-
 
 use App\Models\Invitation;
 use App\Repositories\Contracts\InvitationInterface;

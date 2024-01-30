@@ -26,49 +26,32 @@ class Team extends Model
         parent::boot();
 
         // when team is created, add current user as team member
-        static::created(fn($team) => $team->members()->attach(auth()->id()));
+        static::created(fn ($team) => $team->members()->attach(auth()->id()));
 
-        static::deleting(fn($team) => $team->members()->sync([]));
+        static::deleting(fn ($team) => $team->members()->sync([]));
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * @return HasMany
-     */
     public function designs(): HasMany
     {
         return $this->hasMany(Design::class);
     }
 
-    /**
-     * @param  User  $user
-     * @return bool
-     */
     public function hasUser(User $user): bool
     {
         return $this->members()->where('user_id', $user->id)
             ->first() ? true : false;
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();
     }
 
-    /**
-     * @param $email
-     * @return bool
-     */
     public function hasPendingInvite($email): bool
     {
         return (bool) $this->invitation()
@@ -76,9 +59,6 @@ class Team extends Model
             ->count();
     }
 
-    /**
-     * @return HasMany
-     */
     public function invitation(): HasMany
     {
         return $this->hasMany(Invitation::class);

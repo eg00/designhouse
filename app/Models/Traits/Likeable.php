@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Models\Traits;
-
 
 use App\Models\Like;
 
@@ -27,7 +25,7 @@ trait Likeable
 
     public function like()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return;
         }
         if ($this->isLikedByUser()) {
@@ -44,10 +42,10 @@ trait Likeable
 
     public function unlike()
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return;
         }
-        if (!$this->isLikedByUser()) {
+        if (! $this->isLikedByUser()) {
             return;
         }
 

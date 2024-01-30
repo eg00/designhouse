@@ -13,22 +13,16 @@ class Message extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id', 'chat_id', 'body', 'last_read'
+        'user_id', 'chat_id', 'body', 'last_read',
     ];
 
     protected $touches = ['chat'];
 
-    /**
-     * @return BelongsTo
-     */
     public function chat(): BelongsTo
     {
         return $this->belongsTo(Chat::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -37,7 +31,7 @@ class Message extends Model
     public function getBodyAttribute($value)
     {
         if ($this->trashed()) {
-            if (!auth()->check()) {
+            if (! auth()->check()) {
                 return null;
             }
 
@@ -45,6 +39,7 @@ class Message extends Model
                 'You deleted this message' :
                 "{$this->sender->name} deleted message";
         }
+
         return $value;
     }
 }

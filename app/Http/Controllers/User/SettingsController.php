@@ -5,10 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Rules\MatchOldPassword;
-use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class SettingsController extends Controller
 {
@@ -27,8 +27,7 @@ class SettingsController extends Controller
 
         $location = new Point($request->location['latitude'], $request->location['longitude']);
 
-
-        $request->user()->update(array_merge($request->toArray(),compact('location')));
+        $request->user()->update(array_merge($request->toArray(), compact('location')));
 
         return new UserResource($user);
     }
@@ -42,6 +41,6 @@ class SettingsController extends Controller
 
         $request->user()->update(['password' => Hash::make($request->password)]);
 
-        return response()->json(['message'=> 'Password updated'], Response::HTTP_OK);
+        return response()->json(['message' => 'Password updated'], Response::HTTP_OK);
     }
 }

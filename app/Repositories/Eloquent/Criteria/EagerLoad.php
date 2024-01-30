@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repositories\Eloquent\Criteria;
-
 
 class EagerLoad implements \App\Repositories\Criteria\CriterionInterface
 {
@@ -10,7 +8,6 @@ class EagerLoad implements \App\Repositories\Criteria\CriterionInterface
 
     /**
      * ForUser constructor.
-     * @param $relationships
      */
     public function __construct($relationships)
     {

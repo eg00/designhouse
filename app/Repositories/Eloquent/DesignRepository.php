@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repositories\Eloquent;
-
 
 use App\Models\Design;
 use App\Repositories\Contracts\DesignInterface;
@@ -10,7 +8,6 @@ use Illuminate\Http\Request;
 
 class DesignRepository extends BaseRepository implements DesignInterface
 {
-
     public function model()
     {
         return Design::class;
@@ -61,7 +58,7 @@ class DesignRepository extends BaseRepository implements DesignInterface
 
         // search title and description for provided string
         if ($request->q) {
-            $query->where(fn($q) => $q->where('title', 'like', '%'.$request->q.'%')
+            $query->where(fn ($q) => $q->where('title', 'like', '%'.$request->q.'%')
                 ->orWhere('description', 'like', '%'.$request->q.'%')
             );
         }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Repositories\Eloquent;
-
 
 use App\Exceptions\ModelNotDefined;
 use App\Repositories\Contracts\BaseInterface;
@@ -20,7 +18,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
 
     protected function getModelClass()
     {
-        if (!method_exists($this, 'model')) {
+        if (! method_exists($this, 'model')) {
             throw new ModelNotDefined();
         }
 
@@ -56,6 +54,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
     {
         $record = $this->find($id);
         $record->update($data);
+
         return $record;
     }
 
@@ -67,6 +66,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
     public function delete(int $id)
     {
         $record = $this->find($id);
+
         return $record->delete();
     }
 
@@ -77,6 +77,7 @@ abstract class BaseRepository implements BaseInterface, CriteriaInterface
         foreach ($criteria as $criterion) {
             $this->model = $criterion->apply($this->model);
         }
+
         return $this;
     }
 }

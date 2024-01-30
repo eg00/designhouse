@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 
 class ForgotPasswordController extends Controller
 {
-
     use SendsPasswordResetEmails;
 
     protected function sendResetLinkResponse(Request $request, $response)

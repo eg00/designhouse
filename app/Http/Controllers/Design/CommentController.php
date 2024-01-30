@@ -12,11 +12,11 @@ use Illuminate\Http\Response;
 class CommentController extends Controller
 {
     protected $comments;
+
     protected $designs;
 
     /**
      * CommentController constructor.
-     * @param $comments
      */
     public function __construct(CommentInterface $comments, DesignInterface $designs)
     {
@@ -27,7 +27,7 @@ class CommentController extends Controller
     public function store(Request $request, $design_id)
     {
         $this->validate($request, [
-            'body' => ['required']
+            'body' => ['required'],
         ]);
 
         $comment = $this->designs->addComment($design_id, [
@@ -44,7 +44,7 @@ class CommentController extends Controller
         $this->authorize('update', $comment);
 
         $this->validate($request, [
-            'body' => ['required']
+            'body' => ['required'],
         ]);
 
         $comment = $this->comments->update($id, [
@@ -53,7 +53,6 @@ class CommentController extends Controller
 
         return new CommentResource($comment);
     }
-
 
     public function destroy($id)
     {

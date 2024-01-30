@@ -15,10 +15,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-
 class InvitationController extends Controller
 {
-
     public function __construct(
         protected InvitationInterface $invitations,
         protected TeamInterface $teams,
@@ -40,23 +38,23 @@ class InvitationController extends Controller
         $user = auth()->user();
 
         // check if the user owns the team
-        if (!optional($user)->isOwnerOfTeam($team)) {
+        if (! optional($user)->isOwnerOfTeam($team)) {
             return response()->json([
-                'email' => 'You are not the team owner'
+                'email' => 'You are not the team owner',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
         // check if the email has a pending invitation
         if ($team->hasPendingInvite($request->input('email'))) {
             return response()->json([
-                'email' => 'Email already has a pending invite'
+                'email' => 'Email already has a pending invite',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         // get the recipient by email
         $recipient = $this->users->findByEmail($request->input('email'));
 
         // if the recipient does not exist, send invitation to join the team
-        if (!$recipient) {
+        if (! $recipient) {
             $this->createInvitation(false, $team, $request->input('email'));
 
             return response()->json(['message' => 'Invitation sent to user']);
@@ -65,12 +63,13 @@ class InvitationController extends Controller
         // check if the team already has the user
         if ($team->hasUser($recipient)) {
             return response()->json([
-                'email' => 'This user already a team member'
+                'email' => 'This user already a team member',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         // send the invitation to the user
         $this->createInvitation(true, $team, $request->input('email'));
+
         return response()->json(['message' => 'Invitation sent to user']);
     }
 
@@ -93,18 +92,17 @@ class InvitationController extends Controller
 
         $this->authorize('respond', $invitation);
         // check if the user owns the team
-        if (!optional(auth()->user())->isOwnerOfTeam($invitation->team)) {
+        if (! optional(auth()->user())->isOwnerOfTeam($invitation->team)) {
             return response()->json([
-                'email' => 'You are not the team owner'
+                'email' => 'You are not the team owner',
             ], Response::HTTP_UNAUTHORIZED);
         }
-
 
         // get the recipient by email
         $recipient = $this->users->findByEmail($invitation->recipient_email);
 
         Mail::to($invitation->recipient_email)
-            ->send(new SendInvitationToJoinTeam($invitation, !is_null($recipient)));
+            ->send(new SendInvitationToJoinTeam($invitation, ! is_null($recipient)));
 
         return response()->json(['message' => 'Invitation resent to user']);
 
@@ -114,7 +112,7 @@ class InvitationController extends Controller
     {
         $this->validate($request, [
             'token' => ['required'],
-            'decision' => ['required', 'boolean']
+            'decision' => ['required', 'boolean'],
         ]);
 
         $token = $request->token;
@@ -122,29 +120,30 @@ class InvitationController extends Controller
         $invitation = $this->invitations->find($id);
 
         // check if the invitation belongs to this user
-//        if($invitation->recipient_email !== auth()->user()->email) {
-//            return  \response()->json([
-//                'message' => 'This is not your invitation'
-//            ], Response::HTTP_UNAUTHORIZED);
-//        }
+        //        if($invitation->recipient_email !== auth()->user()->email) {
+        //            return  \response()->json([
+        //                'message' => 'This is not your invitation'
+        //            ], Response::HTTP_UNAUTHORIZED);
+        //        }
 
         $this->authorize('respond', $invitation);
 
         // check to make sure that the tokens match
-        if($invitation->token !== $token) {
-            return  \response()->json([
-                'message' => 'The token is invalid'
+        if ($invitation->token !== $token) {
+            return \response()->json([
+                'message' => 'The token is invalid',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if($decision) {
+        if ($decision) {
             auth()->user()->teams()->attach($invitation->team->id);
             $this->invitations->addUserToTeam($invitation->team, auth()->id());
         }
 
         $invitation->delete();
-        return  \response()->json([
-            'message' => 'Successful'
+
+        return \response()->json([
+            'message' => 'Successful',
         ]);
     }
 
@@ -155,6 +154,7 @@ class InvitationController extends Controller
         $this->authorize('delete', $invitation);
 
         $invitation->delete();
-        return  \response()->json(['message' => 'Successful']);
+
+        return \response()->json(['message' => 'Successful']);
     }
 }

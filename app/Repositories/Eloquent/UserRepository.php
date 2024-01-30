@@ -1,18 +1,14 @@
 <?php
 
-
 namespace App\Repositories\Eloquent;
-
 
 use App\Models\User;
 use App\Repositories\Contracts\UserInterface;
-use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Http\Request;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class UserRepository extends BaseRepository implements UserInterface
 {
-
-
     public function model()
     {
         return User::class;

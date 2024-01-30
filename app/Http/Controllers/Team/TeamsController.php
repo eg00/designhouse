@@ -33,14 +33,11 @@ class TeamsController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return TeamResource
      */
     public function store(Request $request): TeamResource
     {
         $this->validate($request, [
-            'name' => ['required', 'string', 'max:80', 'unique:teams,name']
+            'name' => ['required', 'string', 'max:80', 'unique:teams,name'],
         ]);
 
         $team = $this->teams->create([
@@ -56,23 +53,21 @@ class TeamsController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return TeamResource
      */
     public function findById($id): TeamResource
     {
         $team = $this->teams->find($id);
+
         return new TeamResource($team);
     }
 
     public function findBySlug($slug): TeamResource
     {
         $team = $this->teams->findWhereFirst('slug', $slug);
+
         return new TeamResource($team);
     }
 
-    /**
-     * @return ResourceCollection
-     */
     public function fetchUserTeams(): ResourceCollection
     {
         $teams = $this->teams->fetchUserTeams();
@@ -83,9 +78,7 @@ class TeamsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
      * @param  int  $id
-     * @return TeamResource
      */
     public function update(Request $request, $id): TeamResource
     {
@@ -93,7 +86,7 @@ class TeamsController extends Controller
         $this->authorize('update', $team);
 
         $this->validate($request, [
-            'name' => ['required', 'string', 'max:80', 'unique:teams,name,'.$id]
+            'name' => ['required', 'string', 'max:80', 'unique:teams,name,'.$id],
         ]);
 
         $team = $this->teams->update($id, [
@@ -115,7 +108,6 @@ class TeamsController extends Controller
         //
     }
 
-
     public function removeFromTeam($teamId, $userId)
     {
         $team = $this->teams->find($teamId);
@@ -123,13 +115,13 @@ class TeamsController extends Controller
 
         if (optional($user)->isOwnerOfTeam($team)) {
             return response()->json([
-                'message' => 'You are the team owner'
+                'message' => 'You are the team owner',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if (!optional(auth()->user())->isOwnerOfTeam($team)) {
+        if (! optional(auth()->user())->isOwnerOfTeam($team)) {
             return response()->json([
-                'message' => 'You cannot do this'
+                'message' => 'You cannot do this',
             ], Response::HTTP_UNAUTHORIZED);
         }
 

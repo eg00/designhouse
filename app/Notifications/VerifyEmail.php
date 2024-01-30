@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\URL;
 
 class VerifyEmail extends Notification
 {
-
     protected function verificationUrl($notifiable)
     {
         $appUrl = config('app.client_url', config('app.url'));
@@ -22,6 +21,7 @@ class VerifyEmail extends Notification
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+
         return str_replace(url('/api'), $appUrl, $url);
     }
 }

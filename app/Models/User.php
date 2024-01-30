@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use Notifiable, HasSpatial;
+    use HasSpatial, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'username',
         'location',
         'available_to_hire',
-        'formatted_address'
+        'formatted_address',
     ];
 
     protected $spatialFields = [
@@ -105,17 +105,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         $this->notify(new ResetPassword($token));
     }
 
-    /**
-     * @return HasMany
-     */
     public function designs(): HasMany
     {
         return $this->hasMany(Design::class);
     }
 
-    /**
-     * @return HasMany
-     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
@@ -126,9 +120,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->teams()->where('owner_id', $this->id);
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class)->withTimestamps();
@@ -154,7 +145,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function getChatWithUser($user_id)
     {
-        return $this->chats()->whereHas('participants', fn($query) => $query->where('user_id', $user_id)
+        return $this->chats()->whereHas('participants', fn ($query) => $query->where('user_id', $user_id)
         )->first();
     }
 

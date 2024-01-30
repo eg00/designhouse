@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Class Design
- * @package App\Models
+ *
  * @method retag($tags)
  */
 class Design extends Model
 {
     use HasFactory;
-    use Taggable;
     use Likeable;
+    use Taggable;
 
     protected $fillable = [
         'user_id',
@@ -31,15 +31,15 @@ class Design extends Model
         'close_to_comment',
         'is_live',
         'upload_successful',
-        'disk'
+        'disk',
     ];
+
     protected $appends = ['images'];
 
-
-//    public function resolveRouteBinding($value, $field = null)
-//    {
-//        return  self::query()->where('slug', $value)->orWhere('id', $value)->firstOrFail();
-//    }
+    //    public function resolveRouteBinding($value, $field = null)
+    //    {
+    //        return  self::query()->where('slug', $value)->orWhere('id', $value)->firstOrFail();
+    //    }
 
     public function user(): BelongsTo
     {
@@ -71,6 +71,4 @@ class Design extends Model
     {
         return $this->belongsTo(Team::class);
     }
-
-
 }

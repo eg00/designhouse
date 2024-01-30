@@ -32,7 +32,6 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
      * @return void
      *
      * @throws \Exception
@@ -46,27 +45,27 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
      */
     public function render($request, Throwable $exception)
     {
-        if($exception instanceof AuthorizationException && $request->expectsJson()) {
-                return response()->json(['errors'=>[
-                    "message" => $exception->getMessage()]], Response::HTTP_FORBIDDEN);
+        if ($exception instanceof AuthorizationException && $request->expectsJson()) {
+            return response()->json(['errors' => [
+                'message' => $exception->getMessage()]], Response::HTTP_FORBIDDEN);
 
         }
-        if($exception instanceof ModelNotFoundException && $request->expectsJson()) {
-                return response()->json(['errors'=>[
-                    "message" => 'The resource was not found']], Response::HTTP_NOT_FOUND);
+        if ($exception instanceof ModelNotFoundException && $request->expectsJson()) {
+            return response()->json(['errors' => [
+                'message' => 'The resource was not found']], Response::HTTP_NOT_FOUND);
         }
 
-        if($exception instanceof ModelNotDefined && $request->expectsJson()) {
-            return response()->json(['errors'=>[
-                "message" => 'No model defined']], Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($exception instanceof ModelNotDefined && $request->expectsJson()) {
+            return response()->json(['errors' => [
+                'message' => 'No model defined']], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
         return parent::render($request, $exception);
     }
 }

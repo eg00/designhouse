@@ -11,6 +11,7 @@ class ResetPassword extends Notification
     {
         $url = url(config('app.client_url').'/password/reset/'.$this->token).
             '?email='.urlencode($notifiable->email);
+
         return (new MailMessage)
             ->subject('Reset Password Notification')
             ->line('You are receiving this email because we received a password reset request for your account.')

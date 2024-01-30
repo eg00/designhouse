@@ -31,7 +31,7 @@ class ChatController extends Controller
 
         $chat = $user->getChatWithUser($recipient);
 
-        if (!$chat) {
+        if (! $chat) {
             $chat = $this->chats->create([]);
             $this->chats->createParticipants($chat->id, [$user->id, $recipient]);
         }
@@ -41,15 +41,12 @@ class ChatController extends Controller
         $message = $this->messages->create([
             'user_id' => $user->id,
             'chat_id' => $chat->id,
-            'body' => $body
+            'body' => $body,
         ]);
 
         return new MessageResource($message);
     }
 
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function getUserChats(): AnonymousResourceCollection
     {
         $chats = $this->chats->getUserChats();
@@ -57,32 +54,23 @@ class ChatController extends Controller
         return ChatResource::collection($chats);
     }
 
-    /**
-     * @param  string  $id
-     * @return AnonymousResourceCollection
-     */
     public function getChatMessages(string $id): AnonymousResourceCollection
     {
         $messages = $this->messages->withCriteria([
-            new WithTrashed()
+            new WithTrashed(),
         ])->findWhere('chat_id', $id);
 
         return MessageResource::collection($messages);
     }
 
-    /**
-     *
-     */
     public function markAsRead($id)
     {
         $chat = $this->chats->find($id);
         $chat->markAsReadForUser(auth()->id());
+
         return response()->json(['message' => 'successfully']);
     }
 
-    /**
-     *
-     */
     public function destroyMessage($id)
     {
         $message = $this->messages->find($id);
