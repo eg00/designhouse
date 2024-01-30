@@ -1,0 +1,22 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - config
+    bootstrapFiles:
+        - vendor/autoload.php
+    level: 8
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: true
+    treatPhpDocTypesAsCertain: false
+
+
+#    ignoreErrors:
+#        - '#PHPDoc tag @var#'
+#
+#    excludePaths:
+#        - ./*/*/FileToBeExcluded.php
+#
+#    checkMissingIterableValueType: false
