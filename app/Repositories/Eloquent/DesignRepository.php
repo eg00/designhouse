@@ -1,48 +1,63 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent;
 
+use App\Models\Comment;
 use App\Models\Design;
 use App\Repositories\Contracts\DesignInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class DesignRepository extends BaseRepository implements DesignInterface
 {
-    public function model()
+    public function model(): Model
     {
-        return Design::class;
+        return new Design();
     }
 
-    public function ApplyTags($id, array $data)
+    /**
+     * @param  array<string>  $data
+     */
+    public function ApplyTags(int $id, array $data): void
     {
+        /** @var Design $design */
         $design = $this->find($id);
         $design->retag($data);
     }
 
-    public function addComment($design_id, array $data)
+    /**
+     * @param  array<mixed>  $data
+     */
+    public function addComment(int $design_id, array $data): Comment
     {
+        /** @var Design $design */
         $design = $this->find($design_id);
 
         return $design->comments()->create($data);
     }
 
-    public function like($id)
+    public function like(int $id): void
     {
+        /** @var Design $design */
         $design = $this->find($id);
 
         $design->isLikedByUser() ? $design->unlike() : $design->like();
     }
 
-    public function isLikedByUser($id)
+    public function isLikedByUser(int $design_id): bool
     {
-        $design = $this->find($id);
+        /** @var Design $design */
+        $design = $this->find($design_id);
 
-        return $design->isLikedByUser(auth()->id());
+        return $design->isLikedByUser();
     }
 
-    public function search(Request $request)
+    public function search(Request $request): Collection
     {
-        $query = (new $this->model)->newQuery();
+        $query = $this->model()->newQuery();
 
         $query->where('is_live', true);
 

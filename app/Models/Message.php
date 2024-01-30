@@ -1,21 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Message extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
         'user_id', 'chat_id', 'body', 'last_read',
     ];
 
+    /**
+     * The relationships that should be touched on save.
+     *
+     * @var array<string>
+     */
     protected $touches = ['chat'];
 
     public function chat(): BelongsTo
@@ -28,16 +33,19 @@ class Message extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function getBodyAttribute($value)
+    public function getBodyAttribute(string $value): ?string
     {
         if ($this->trashed()) {
             if (! auth()->check()) {
                 return null;
             }
 
-            return auth()->id() === $this->sender->id ?
+            /** @var User $sender */
+            $sender = $this->sender;
+
+            return auth()->id() === $sender->id ?
                 'You deleted this message' :
-                "{$this->sender->name} deleted message";
+                "{$sender->name} deleted message";
         }
 
         return $value;

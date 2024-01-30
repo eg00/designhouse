@@ -1,29 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Traits;
 
 use App\Models\Like;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Likeable
 {
-    public static function bootLikeable()
+    public static function bootLikeable(): void
     {
         static::deleting(fn ($model) => $model->removeLikes());
     }
 
-    public function removeLikes()
+    public function removeLikes(): void
     {
         if ($this->likes()->count()) {
             $this->likes()->delete();
         }
     }
 
-    public function likes()
+    public function likes(): MorphMany
     {
         return $this->morphMany(Like::class, 'likeable');
     }
 
-    public function like()
+    public function like(): void
     {
         if (! auth()->check()) {
             return;
@@ -37,10 +40,10 @@ trait Likeable
 
     public function isLikedByUser(): bool
     {
-        return $this->likes()->where('user_id', auth()->id())->count();
+        return (bool) $this->likes()->where('user_id', auth()->id())->count();
     }
 
-    public function unlike()
+    public function unlike(): void
     {
         if (! auth()->check()) {
             return;

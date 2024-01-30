@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -24,7 +26,7 @@ class ProfileJsonResponse
 
         if ($response instanceof JsonResponse && $request->has('_debug')) {
             $response->setData(array_merge($response->getData(true), [
-                '_debugbar' => Arr::only(app('debugbar')->getData(true), 'queries'),
+                '_debugbar' => Arr::only(app('debugbar')->getData(), 'queries'),
             ]));
         }
 

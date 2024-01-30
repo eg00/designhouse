@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Rules;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,7 +29,10 @@ class MatchOldPassword implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Hash::check($value, auth()->user()->password);
+        $user = auth()->user();
+        assert($user instanceof MustVerifyEmail);
+
+        return Hash::check($value, $user->password);
     }
 
     /**

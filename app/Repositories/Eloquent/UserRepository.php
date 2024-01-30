@@ -1,27 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class UserRepository extends BaseRepository implements UserInterface
 {
-    public function model()
+    public function model(): Model
     {
-        return User::class;
+        return new User();
     }
 
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): ?User
     {
+        /** @var User|null */
         return $this->findWhere('email', $email)->first();
     }
 
-    public function search(Request $request)
+    public function search(Request $request): Collection
     {
-        $query = (new $this->model)->newQuery();
+
+        $query = $this->model()->newQuery();
 
         // only designers who have designs
         if ($request->has_designs) {

@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Criteria;
 
 interface CriteriaInterface
 {
-    public function withCriteria(...$criteria);
+    /**
+     * @param  array<mixed>  $criteria
+     */
+    public function withCriteria(...$criteria): self;
 }

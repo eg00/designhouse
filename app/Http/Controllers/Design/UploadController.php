@@ -1,20 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Design;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\UploadImage;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class UploadController extends Controller
 {
-    public function upload(Request $request)
+    public function upload(Request $request): JsonResponse
     {
+        /** @var User $user */
+        $user = auth()->user();
         $this->validate($request, [
             'image' => ['required', 'mimes:jpg,gif,png', 'max:2048']]);
 
         // get the image
+        /** @var \Illuminate\Http\UploadedFile $image */
         $image = $request->file('image');
         $image_path = $image->getPathname();
 
@@ -25,7 +32,7 @@ class UploadController extends Controller
         $tmp = $image->storeAs('uploads/original', $filename, 'tmp');
 
         // create the database record for the design
-        $design = auth()->user()->designs()->create([
+        $design = $user->designs()->create([
             'image' => $filename,
             'disk' => config('site.upload_disk'),
         ]);

@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Notifications\ResetPassword;
 use App\Notifications\VerifyEmail;
+use Carbon\CarbonImmutable;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,14 +19,34 @@ use Laravolt\Avatar\Avatar;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $username
+ * @property string $email
+ * @property CarbonImmutable|null $email_verified_at
+ * @property string|null $tagline
+ * @property string|null $about
+ * @property bool $available_to_hire
+ * @property string $password
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Avatar                 $avatar
+ * @property-read Collection<Team>       $teams
+ * @property-read Collection<Invitation> $invitations
+ * @property-read Collection<Message>    $messages
+ * @property-read Collection<Design>     $designs
+ * @property-read Collection<Comment>    $comments
+ * @property-read Collection<Chat>       $chats
+ */
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasSpatial, Notifiable;
+    use HasFactory, HasSpatial, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * * @var array<string>
      */
     protected $fillable = [
         'name',
@@ -34,42 +60,48 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'formatted_address',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $spatialFields = [
         'location',
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
+     * @return string[]
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getHidden()
+    {
+        return [
+            'password',
+            'remember_token',
+        ];
+    }
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
+     * @return string[]
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function getCasts()
+    {
+        return [
+            'email_verified_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
+     * @return array<string>
      */
-    protected $appends = ['photo_url'];
+    public function getAppends(): array
+    {
+        return ['photo_url'];
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
      */
-    public function getJWTIdentifier()
+    public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
@@ -77,19 +109,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [];
     }
 
     /**
      * Send the email verification notification.
-     *
-     * @return void
      */
-    public function sendEmailVerificationNotification()
+    public function sendEmailVerificationNotification(): void
     {
         $this->notify(new VerifyEmail);
     }
@@ -98,9 +128,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPassword($token));
     }
@@ -125,7 +154,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->belongsToMany(Team::class)->withTimestamps();
     }
 
-    public function isOwnerOfTeam($team)
+    public function isOwnerOfTeam(Team $team): bool
     {
         return (bool) $this->teams()
             ->where('team_id', $team->id)
@@ -133,29 +162,34 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             ->count();
     }
 
-    public function invitations()
+    public function invitations(): HasMany
     {
         return $this->hasMany(Invitation::class, 'recipient_email', 'email');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
-    public function getChatWithUser($user_id)
+    public function getChatWithUser(int $user_id): Chat
     {
         return $this->chats()->whereHas('participants', fn ($query) => $query->where('user_id', $user_id)
-        )->first();
+        )->firstOrFail();
     }
 
-    public function chats()
+    public function chats(): BelongsToMany
     {
         return $this->belongsToMany(Chat::class, 'participants');
     }
 
-    public function getPhotoUrlAttribute()
+    public function getPhotoUrlAttribute(): Avatar
     {
         return (new Avatar)->create($this->email)->toGravatar();
+    }
+
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
     }
 }

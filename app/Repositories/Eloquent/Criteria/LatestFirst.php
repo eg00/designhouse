@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent\Criteria;
 
-class LatestFirst implements \App\Repositories\Criteria\CriterionInterface
+use App\Repositories\Criteria\CriterionInterface;
+use Illuminate\Database\Eloquent\Builder;
+
+class LatestFirst implements CriterionInterface
 {
-    public function apply($model)
+    public function apply(Builder $builder): Builder
     {
-        return $model->latest();
+        return $builder->latest();
     }
 }

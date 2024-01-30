@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -32,17 +34,14 @@ class VerificationController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
-    protected $users;
-
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(UserInterface $users)
+    public function __construct(protected UserInterface $users)
     {
         $this->middleware('throttle:6,1')->only('verify', 'resend');
-        $this->users = $users;
     }
 
     /**
@@ -75,7 +74,7 @@ class VerificationController extends Controller
         }
 
         if ($user->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+            event(new Verified($user));
 
             return \response()->json(['message' => 'Email successfully verified'], Response::HTTP_OK);
         }
@@ -97,14 +96,8 @@ class VerificationController extends Controller
     {
         $this->validate($request, ['email' => ['email', 'required']]);
 
+        /** @var User $user */
         $user = $this->users->findWhereFirst('email', $request->email);
-        if (! $user) {
-            return \response()->json([
-                'errors' => [
-                    'message' => 'No user could be found with this email address',
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
 
         // check if the user has already verified  account
         if ($user->hasVerifiedEmail()) {

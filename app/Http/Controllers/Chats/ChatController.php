@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Chats;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ChatResource;
 use App\Http\Resources\MessageResource;
+use App\Models\Chat;
+use App\Models\User;
 use App\Repositories\Contracts\ChatInterface;
 use App\Repositories\Contracts\MessageInterface;
 use App\Repositories\Eloquent\Criteria\WithTrashed;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -26,14 +31,16 @@ class ChatController extends Controller
         ]);
 
         $recipient = $request->input('recipient');
+        /** @var User $user */
         $user = $request->user();
         $body = $request->input('body');
 
         $chat = $user->getChatWithUser($recipient);
 
         if (! $chat) {
+            /** @var Chat $chat */
             $chat = $this->chats->create([]);
-            $this->chats->createParticipants($chat->id, [$user->id, $recipient]);
+            $this->chats->createParticipants((int) $chat->id, [$user->id, $recipient]);
         }
 
         // add the message to the chat
@@ -63,15 +70,18 @@ class ChatController extends Controller
         return MessageResource::collection($messages);
     }
 
-    public function markAsRead($id)
+    public function markAsRead(int $id): JsonResponse
     {
+        /** @var User $user */
+        $user = auth()->user();
+        /** @var Chat $chat */
         $chat = $this->chats->find($id);
-        $chat->markAsReadForUser(auth()->id());
+        $chat->markAsReadForUser($user->id);
 
         return response()->json(['message' => 'successfully']);
     }
 
-    public function destroyMessage($id)
+    public function destroyMessage(int $id): void
     {
         $message = $this->messages->find($id);
         $this->authorize('delete', $message);

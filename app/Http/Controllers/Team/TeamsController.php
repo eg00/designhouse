@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TeamResource;
+use App\Models\Team;
+use App\Models\User;
 use App\Repositories\Contracts\InvitationInterface;
 use App\Repositories\Contracts\TeamInterface;
 use App\Repositories\Contracts\UserInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
@@ -61,7 +66,7 @@ class TeamsController extends Controller
         return new TeamResource($team);
     }
 
-    public function findBySlug($slug): TeamResource
+    public function findBySlug(string $slug): TeamResource
     {
         $team = $this->teams->findWhereFirst('slug', $slug);
 
@@ -101,16 +106,17 @@ class TeamsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return void
      */
-    public function destroy($id)
+    public function destroy($id): void
     {
         //
     }
 
-    public function removeFromTeam($teamId, $userId)
+    public function removeFromTeam(int $teamId, int $userId): JsonResponse
     {
+        /** @var Team $team */
         $team = $this->teams->find($teamId);
+        /** @var User $user */
         $user = $this->users->find($userId);
 
         if (optional($user)->isOwnerOfTeam($team)) {

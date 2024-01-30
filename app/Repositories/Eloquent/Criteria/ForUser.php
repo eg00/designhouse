@@ -1,23 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent\Criteria;
 
 use App\Repositories\Criteria\CriterionInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class ForUser implements CriterionInterface
 {
-    protected $user_id;
-
     /**
      * ForUser constructor.
      */
-    public function __construct($user_id)
+    public function __construct(protected int $user_id)
     {
-        $this->user_id = $user_id;
     }
 
-    public function apply($model)
+    public function apply(Builder $builder): Builder
     {
-        return $model->where('user_id', $this->user_id);
+        return $builder->where('user_id', $this->user_id);
     }
 }

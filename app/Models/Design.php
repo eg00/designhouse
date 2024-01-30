@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Traits\Likeable;
@@ -46,7 +48,10 @@ class Design extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getImagesAttribute()
+    /**
+     * @return array<string>
+     */
+    public function getImagesAttribute(): array
     {
         return [
             'thumbnail' => $this->getImagePath('thumbnail'),

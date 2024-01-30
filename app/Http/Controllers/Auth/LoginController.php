@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
@@ -35,6 +38,7 @@ class LoginController extends Controller
 
         // get the authenticated user
 
+        /** @var User $user */
         $user = $this->guard()->user();
 
         if (! $user->hasVerifiedEmail()) {

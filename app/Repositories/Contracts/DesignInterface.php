@@ -1,21 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Contracts;
 
+use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 /**
  * @method withCriteria(array $array)
  */
 interface DesignInterface extends BaseInterface
 {
-    public function ApplyTags($id, array $data);
+    /**
+     * @param  array<mixed>  $data
+     */
+    public function ApplyTags(int $id, array $data): void;
 
-    public function addComment($design_id, array $data);
+    /**
+     * @param  array<mixed>  $data
+     */
+    public function addComment(int $design_id, array $data): Comment;
 
-    public function like($id);
+    public function like(int $id): void;
 
-    public function isLikedByUser($design_id);
+    public function isLikedByUser(int $design_id): bool;
 
-    public function search(Request $request);
+    public function search(Request $request): Collection;
 }

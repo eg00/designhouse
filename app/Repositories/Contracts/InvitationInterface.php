@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Contracts;
+
+use App\Models\Team;
 
 interface InvitationInterface extends BaseInterface
 {
-    public function addUserToTeam($team, $user_id);
+    public function addUserToTeam(Team $team, int $user_id): void;
 
-    public function removeUserFromTeam($team, $user_id);
+    public function removeUserFromTeam(Team $team, int $user_id): void;
 }

@@ -1,21 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent\Criteria;
 
-class EagerLoad implements \App\Repositories\Criteria\CriterionInterface
-{
-    protected $relationships;
+use App\Repositories\Criteria\CriterionInterface;
+use Illuminate\Database\Eloquent\Builder;
 
+class EagerLoad implements CriterionInterface
+{
     /**
-     * ForUser constructor.
+     * @param  array<string>  $relationships
      */
-    public function __construct($relationships)
+    public function __construct(protected array $relationships)
     {
-        $this->relationships = $relationships;
     }
 
-    public function apply($model)
+    public function apply(Builder $builder): Builder
     {
-        return $model->with($this->relationships);
+        return $builder->with($this->relationships);
     }
 }

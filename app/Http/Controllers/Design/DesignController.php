@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Design;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
+use App\Models\Design;
 use App\Repositories\Contracts\DesignInterface;
 use App\Repositories\Eloquent\Criteria\EagerLoad;
 use App\Repositories\Eloquent\Criteria\ForUser;
@@ -36,7 +39,7 @@ class DesignController extends Controller
         return DesignResource::collection($designs);
     }
 
-    public function show($id): DesignResource
+    public function show(int $id): DesignResource
     {
         $design = $this->designs->find($id);
 
@@ -47,8 +50,9 @@ class DesignController extends Controller
      * @throws AuthorizationException
      * @throws ValidationException
      */
-    public function update(Request $request, $id): DesignResource
+    public function update(Request $request, int $id): DesignResource
     {
+        /** @var Design $design */
         $design = $this->designs->find($id);
         $this->authorize('update', $design);
 
@@ -76,8 +80,9 @@ class DesignController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
+        /** @var Design $design */
         $design = $this->designs->find($id);
         $this->authorize('delete', $design);
 
@@ -94,28 +99,28 @@ class DesignController extends Controller
         return \response()->json(['message' => 'Record deleted'], Response::HTTP_OK);
     }
 
-    public function like($id): JsonResponse
+    public function like(int $id): JsonResponse
     {
         $this->designs->like($id);
 
         return \response()->json(['message' => 'Successful'], Response::HTTP_OK);
     }
 
-    public function checkIfUserHasLiked($design_id)
+    public function checkIfUserHasLiked(int $design_id): JsonResponse
     {
         $isLiked = $this->designs->isLikedByUser($design_id);
 
         return \response()->json(['liked' => $isLiked]);
     }
 
-    public function search(Request $request)
+    public function search(Request $request): ResourceCollection
     {
         $designs = $this->designs->search($request);
 
         return DesignResource::collection($designs);
     }
 
-    public function showBySlug($slug)
+    public function showBySlug(string $slug): DesignResource
     {
         $design = $this->designs->withCriteria([
             new LatestFirst(), new IsLive(),
@@ -124,7 +129,7 @@ class DesignController extends Controller
         return new DesignResource($design);
     }
 
-    public function getForTeam($id)
+    public function getForTeam(int $id): ResourceCollection
     {
         $designs = $this->designs->withCriteria([
             new LatestFirst(), new IsLive(),
@@ -133,7 +138,7 @@ class DesignController extends Controller
         return DesignResource::collection($designs);
     }
 
-    public function getForUser($id)
+    public function getForUser(int $id): ResourceCollection
     {
         $designs = $this->designs->withCriteria([
             new LatestFirst(), new IsLive(),

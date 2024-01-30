@@ -1,37 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\Carbon;
 use GoldSpecDigital\LaravelEloquentUUID\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Chat extends Model
 {
-    use HasFactory;
-
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'participants');
     }
 
-    public function getLatestMessageAttribute()
+    public function getLatestMessageAttribute(): ?Message
     {
         return $this->messages()->latest()->first();
     }
 
-    // helper
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
-    public function isUnreadForUser($user_id)
+    public function isUnreadForUser(int $user_id): bool
     {
         return (bool) $this->messages()
             ->whereNull('last_read')
@@ -39,7 +34,7 @@ class Chat extends Model
             ->count();
     }
 
-    public function markAsReadForUser($user_id)
+    public function markAsReadForUser(int $user_id): int
     {
         return $this->messages()
             ->whereNull('last_read')

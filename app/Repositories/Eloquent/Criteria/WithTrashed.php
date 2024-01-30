@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent\Criteria;
 
-class WithTrashed implements \App\Repositories\Criteria\CriterionInterface
+use App\Repositories\Criteria\CriterionInterface;
+use Illuminate\Database\Eloquent\Builder;
+
+class WithTrashed implements CriterionInterface
 {
-    public function apply($model)
+    public function apply(Builder $builder): Builder
     {
-        return $model->withTrashed();
+        return $builder->withTrashed();
     }
 }

@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Rules\MatchOldPassword;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -12,8 +16,9 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class SettingsController extends Controller
 {
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request): UserResource
     {
+        /** @var User $user */
         $user = auth()->user();
 
         $this->validate($request, [
@@ -27,19 +32,22 @@ class SettingsController extends Controller
 
         $location = new Point($request->location['latitude'], $request->location['longitude']);
 
-        $request->user()->update(array_merge($request->toArray(), compact('location')));
+        $user->update(array_merge($request->toArray(), compact('location')));
 
         return new UserResource($user);
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request): JsonResponse
     {
+        /** @var User $user */
+        $user = auth()->user();
+
         $this->validate($request, [
             'current_password' => ['required', new MatchOldPassword],
             'password' => ['required', 'confirmed', 'min:6', 'different:current_password'],
         ]);
 
-        $request->user()->update(['password' => Hash::make($request->password)]);
+        $user->update(['password' => Hash::make($request->password)]);
 
         return response()->json(['message' => 'Password updated'], Response::HTTP_OK);
     }

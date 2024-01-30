@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -27,19 +29,16 @@ class RegisterController extends Controller
 
     use RegistersUsers;
 
-    protected $users;
-
-    public function __construct(UserInterface $users)
+    public function __construct(protected UserInterface $users)
     {
-        $this->users = $users;
     }
 
     /**
      * Get a validator for an incoming registration request.
      *
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @param  array<mixed>  $data
      */
-    protected function validator(array $data)
+    protected function validator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
@@ -52,10 +51,11 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @return \App\Models\User
+     * @param  array<mixed>  $data
      */
-    protected function create(array $data)
+    protected function create(array $data): User
     {
+        /** @var User */
         return $this->users->create([
             'name' => $data['name'],
             'username' => $data['username'],

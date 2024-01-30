@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
 use App\Mail\SendInvitationToJoinTeam;
+use App\Models\Invitation;
 use App\Models\Team;
+use App\Models\User;
 use App\Repositories\Contracts\InvitationInterface;
 use App\Repositories\Contracts\TeamInterface;
 use App\Repositories\Contracts\UserInterface;
@@ -24,8 +28,9 @@ class InvitationController extends Controller
     ) {
     }
 
-    public function invite(Request $request, $teamId): JsonResponse
+    public function invite(Request $request, int $teamId): JsonResponse
     {
+        /** @var Team $team */
         $team = $this->teams->find($teamId);
 
         try {
@@ -75,6 +80,7 @@ class InvitationController extends Controller
 
     protected function createInvitation(bool $user_exists, Team $team, string $email): void
     {
+        /** @var Invitation $invitation */
         $invitation = $this->invitations->create([
             'team_id' => $team->id,
             'sender_id' => auth()->id(),
@@ -86,8 +92,9 @@ class InvitationController extends Controller
             ->send(new SendInvitationToJoinTeam($invitation, $user_exists));
     }
 
-    public function resend($id): JsonResponse
+    public function resend(int $id): JsonResponse
     {
+        /** @var Invitation $invitation */
         $invitation = $this->invitations->find($id);
 
         $this->authorize('respond', $invitation);
@@ -108,8 +115,10 @@ class InvitationController extends Controller
 
     }
 
-    public function respond(Request $request, $id): JsonResponse
+    public function respond(Request $request, int $id): JsonResponse
     {
+        /** @var User $user */
+        $user = auth()->user();
         $this->validate($request, [
             'token' => ['required'],
             'decision' => ['required', 'boolean'],
@@ -117,6 +126,7 @@ class InvitationController extends Controller
 
         $token = $request->token;
         $decision = $request->decision;
+        /** @var Invitation $invitation */
         $invitation = $this->invitations->find($id);
 
         // check if the invitation belongs to this user
@@ -135,9 +145,9 @@ class InvitationController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($decision) {
-            auth()->user()->teams()->attach($invitation->team->id);
-            $this->invitations->addUserToTeam($invitation->team, auth()->id());
+        if ($decision && $invitation->team) {
+            $user->teams()->attach($invitation->team->id);
+            $this->invitations->addUserToTeam($invitation->team, $user->id);
         }
 
         $invitation->delete();
@@ -147,7 +157,7 @@ class InvitationController extends Controller
         ]);
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $invitation = $this->invitations->find($id);
 
